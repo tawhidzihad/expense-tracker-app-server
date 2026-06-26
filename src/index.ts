@@ -44,6 +44,27 @@ async function run() {
 			});
 		});
 
+		// Update single expense data
+		app.patch("/api/expense/:id", async (req: Request, res: Response) => {
+			const id = req.params.id as string;
+
+			const filter = {
+				_id: new ObjectId(id),
+			};
+
+			const updatedData: Partial<Expense> = req.body;
+
+			const result = await expensesCollection.updateOne(filter, {
+				$set: updatedData,
+			});
+
+			res.status(200).json({
+				success: true,
+				message: "Expense edited successfully.",
+				data: result,
+			});
+		});
+
 		// Get all expenses with pagination, category filter, total expense amount, and pie chart summary
 		app.get("/api/expense", async (req: Request, res: Response) => {
 			const page = Number(req.query.page) || 1;
@@ -131,27 +152,6 @@ async function run() {
 						categorySummary,
 					},
 				},
-			});
-		});
-
-		// Update single expense data
-		app.patch("/api/expense/:id", async (req: Request, res: Response) => {
-			const id = req.params.id as string;
-
-			const filter = {
-				_id: new ObjectId(id),
-			};
-
-			const updatedData: Partial<Expense> = req.body;
-
-			const result = await expensesCollection.updateOne(filter, {
-				$set: updatedData,
-			});
-
-			res.status(200).json({
-				success: true,
-				message: "Expense edited successfully.",
-				data: result,
 			});
 		});
 
