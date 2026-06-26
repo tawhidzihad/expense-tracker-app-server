@@ -65,6 +65,30 @@ async function run() {
 			});
 		});
 
+		// Single Expense Delete api
+		app.delete("/api/expense/:id", async (req: Request, res: Response) => {
+			const id = req.params.id as string;
+
+			const filter = {
+				_id: new ObjectId(id),
+			};
+
+			const result = await expensesCollection.deleteOne(filter);
+
+			if (result.deletedCount === 0) {
+				return res.status(404).json({
+					success: false,
+					message: "Expense not found.",
+				});
+			}
+
+			res.status(200).json({
+				success: true,
+				message: "Expense deleted successfully.",
+				data: result,
+			});
+		});
+
 		// Get all expenses with pagination, category filter, total expense amount, and pie chart summary
 		app.get("/api/expense", async (req: Request, res: Response) => {
 			const page = Number(req.query.page) || 1;
